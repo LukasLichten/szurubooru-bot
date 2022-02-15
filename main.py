@@ -12,7 +12,7 @@ def init(settings):
            del settings[key]; 
 
     file_settings = read_conf();
-    
+
     # there is a config file, enviroment variables have priority
     if len(file_settings) > 0:
         print('Setting File found, adding values, enviroment variables keep priority');
@@ -39,20 +39,34 @@ def init(settings):
         lacking_key_error_thrower('SERVER_ADDRESSE');
 
     api_url = settings['SERVER_ADDRESSE'];
-    if api_url.find('http') == -1:
-        api_url = 'http://' + api_url;
-    
-    if api_url.endswith('/'):
-        # so we can add the port we remove the last slash
-        api_url = api_url[:(len(api_url)-1)];
-    
-    # TODO: Check for existing port in the url
 
+    has_http = api_url.find('http') != -1;
     if 'SERVER_PORT' not in settings:
-        lacking_key_error_thrower('SERVER_PORT');
+        settings['SERVER_PORT'] = '-1'
 
-    api_url = api_url + ':' + settings['SERVER_PORT'] + '/';
+    if not has_http or (has_http and settings['SERVER_PORT'] not in ['-1', '80', '443', '6666']):
+        if not has_http:
+            api_url = 'http://' + api_url;
+    
+        if api_url.endswith('/'):
+            # so we can add the port we remove the last slash
+            api_url = api_url[:(len(api_url)-1)];
+    
+        # TODO: Check for existing port in the url
+
+        if settings['SERVER_PORT'] == '-1':
+            lacking_key_error_thrower('SERVER_PORT');
+
+        api_url = api_url + ':' + settings['SERVER_PORT'] + '/';
+    else: #external mode, insuring http
+        if not api_url.endswith('/api/'):
+            if api_url.endswith('/'):
+                # uniform adding of the api
+                api_url = api_url[:(len(api_url)-1)];
+            api_url = api_url + '/api/';
+    
     settings['API_URL'] = api_url;
+    
     print('Server: {0}'.format(api_url))
 
     # formating header
@@ -70,16 +84,27 @@ def init(settings):
     print('User: {0}'.format(settings['USER']));
 
     # Branching between single run and continues execution
-    if 'METHODE' not in settings:
-        print('Entering continues execution');
+    if 'MODE' not in settings or settings['MODE'].lower() == 'bot':
         run(settings);
     else:
-        method = settings['METHODE'];
-        print('Executing {0}'.format(method));
-        api_handler.get_and_out(settings, method);
-        print('Finished execution');
+        if 'METHODE' not in settings:
+            lacking_key_error_thrower('METHODE');
+        
+
+        if settings['MODE'].lower() == 'command' or settings['MODE'].lower() == 'c' or settings['MODE'].lower() == 'com':
+            print('Entering Command Mode...');
+
+        elif settings['MODE'].lower() == 'api':
+            print('Entering API Mode...');
+            method = settings['METHODE'];
+            print('Executing {0}'.format(method));
+            api_handler.get_and_out(settings, method);
+    
+    print('Finished execution');
 
 def run(settings):
+    print('Entering Bot Mode...');
+
     # TODO: proper programm
     while True:
         time.sleep(10);
