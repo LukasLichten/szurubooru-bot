@@ -24,9 +24,6 @@ def init(settings):
             elif key == 'SERVER_PORT' and key in settings and settings[key] == '6666':
                 # the port in env is the default, we will use the one from the file
                 settings[key] = file_settings[key];
-            elif key == 'MODE' and key in settings and settings[key] == 'boT':
-                # the mode is default, using the mode from the file
-                settings[key] = file_settings[key];
             elif key not in settings:
                 settings[key] = file_settings[key];
     
