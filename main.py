@@ -17,16 +17,20 @@ def init(settings):
     if len(file_settings) > 0:
         print('Setting File found, adding values, enviroment variables keep priority');
         for key, value in file_settings.copy().items():
+
             if key == 'SERVER_ADDRESSE' and key in settings and settings[key] == 'server':
                 # the addresse in env is the default, we will use the one from the file
                 settings[key] = file_settings[key];
             elif key == 'SERVER_PORT' and key in settings and settings[key] == '6666':
                 # the port in env is the default, we will use the one from the file
                 settings[key] = file_settings[key];
+            elif key == 'MODE' and key in settings and settings[key] == 'boT':
+                # the mode is default, using the mode from the file
+                settings[key] = file_settings[key];
             elif key not in settings:
                 settings[key] = file_settings[key];
     
-    else:
+    elif 'MODE' not in settings or settings['MODE'].lower() == 'bot':
         # we only write the config if it does not exist already
         print('Writing Setting File');
         write_conf(settings);
