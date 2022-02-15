@@ -1,5 +1,5 @@
 import os;
-import main;
+import run.main;
 
 # Getting the settings from the docker envirment variables
 print('Starting via Docker...');
@@ -13,4 +13,4 @@ settings['TOKEN'] = os.getenv('TOKEN', '');
 settings['MODE'] = os.getenv('MODE', 'boT');
 settings['METHODE'] = os.getenv('METHODE', '');
 
-main.init(settings);
+run.main.init(settings);

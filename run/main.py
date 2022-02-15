@@ -2,7 +2,7 @@ import json;
 import base64;
 import time;
 
-import api_handler;
+from . import api_handler;
 
 # called by docker_entry or cli after gathering their enviroment variables
 def init(settings):
