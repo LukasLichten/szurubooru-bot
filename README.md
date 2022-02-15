@@ -21,7 +21,7 @@ Some python to perform admin tasks in szurubooru, able to be used containerized 
 | USER            | *TODO*        | *required* | Username, can be a regular user, but moderator is recommended                                                                                                                                             |
 | TOKEN           | *TODO*        | *required* | Login Token for this user, no password authentication, easiest way is to generate one via the standard web interface                                                                                      |
 | MODE            | *TODO*        | bot        | Mode, can be either bot for running in bot mode, command (c or com) to run a single command or api which allows you to run an api command                                                                      |
-| METHODE         | *TODO*        | *optional* | Ignored in Bot mode, but is the command for command mode and the api url-ending for api mode                                                                                           |
+| METHODE         | *TODO*        | *optional* | Ignored in Bot mode, but is required for command and api mode. It is the command for command mode and the api url-ending for api mode                                                                        |
 
 
 Running the programm in Bot Mode will lead to the automatic creation of a config.json (a dicitonary using the Docker names as keys).  
