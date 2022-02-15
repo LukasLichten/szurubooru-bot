@@ -1,5 +1,5 @@
 # szurubooru-bot
-Some python to perform admin tasks in szurubooru, able to be used containerized or cli (or cli in container)
+Some python to perform admin tasks in szurubooru, able to be used containerized or cli (or cli in container)  
 
 ## Features
 + Deploy as you need:
@@ -22,9 +22,9 @@ Some python to perform admin tasks in szurubooru, able to be used containerized 
 | TOKEN           | *TODO*        | *required* | Login Token for this user, no password authentication, easiest way is to generate one via the standard web interface                                                                                      |
 
 
-Running the programm in Bot Mode will lead to the automatic creation of a config.json (a dicitonary using the Docker names as keys).
-Variables from cli/docker enviroment will take priority, anything missing will be added from the config.json (no need to pass the server_address and credentials then, but you can to control someone else).
-If the config.json exists it won't be overwritten.
+Running the programm in Bot Mode will lead to the automatic creation of a config.json (a dicitonary using the Docker names as keys).  
+Variables from cli/docker enviroment will take priority, anything missing will be added from the config.json (no need to pass the server_address and credentials then, but you can to control someone else).  
+If the config.json exists it won't be overwritten.  
 
 ## Plans
 + Mass Tagging (and other mass editing)
