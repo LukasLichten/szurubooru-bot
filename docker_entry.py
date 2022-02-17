@@ -13,4 +13,11 @@ settings['TOKEN'] = os.getenv('TOKEN', '');
 settings['MODE'] = os.getenv('MODE', '');
 settings['METHODE'] = os.getenv('METHODE', '');
 
+# Additional Arguments
+settings['ARG_TAGS'] = os.getenv('ARG_TAGS', '').split(',');
+settings['ARG_CREATE_TAG'] = os.getenv('ARG_CREATE_TAG', '');
+settings['ARG_TAG_CATEGORY'] = os.getenv('ARG_TAG_CATEGORY', '');
+settings['ARG_POSTS'] = os.getenv('ARG_POSTS', '').split(',');
+
+
 run.main.init(settings);

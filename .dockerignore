@@ -1,7 +1,6 @@
 /.git/
 __pycache__/
 .gitignore
-doc/
 config.json
 
 test.sh

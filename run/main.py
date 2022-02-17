@@ -3,12 +3,13 @@ import base64;
 import time;
 
 from . import api_handler;
+from . import command;
 
 # called by docker_entry or cli after gathering their enviroment variables
 def init(settings):
     # basic clean up:
     for key, value in settings.copy().items():
-        if value == '':
+        if value == '' or (len(value) == 0 and value[0] == ''):
            del settings[key]; 
 
     file_settings = read_conf();
@@ -91,13 +92,20 @@ def init(settings):
         if 'METHODE' not in settings:
             lacking_key_error_thrower('METHODE');
         
+        mode = settings['MODE'].lower();
+        method = settings['METHODE'];
 
-        if settings['MODE'].lower() == 'command' or settings['MODE'].lower() == 'c' or settings['MODE'].lower() == 'com':
+        if mode == 'command' or mode == 'c' or mode == 'com':
             print('Entering Command Mode...');
+            method = method.lower();
 
-        elif settings['MODE'].lower() == 'api':
+            if method == 'mass_tag':
+                command.mass_tag(settings);
+            else:
+                command.stop_early('Methode {0} unknown, make sure you spelled it correctly'.format(method))
+
+        elif mode == 'api':
             print('Entering API Mode...');
-            method = settings['METHODE'];
             print('Executing {0}'.format(method));
             api_handler.get_and_out(settings, method);
     
@@ -124,4 +132,5 @@ def write_conf(settings):
 
 def lacking_key_error_thrower(key):
     print('Missing {0}, which is required to be passed in'.format(key));
-    raise NameError('{0} was not passed in, and is missing'.format(key));
+    exit();
+    #raise NameError('{0} was not passed in, and is missing'.format(key));

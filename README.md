@@ -7,8 +7,8 @@ Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurub
   + Docker in Single command, runs the command and closes
   + Cli can do both as well
 + Admin tools:
-  + Mass Tagging *WIP*
-  + Run commands in api
+  + Mass Tagging
+  + Run commands on the api
 + Bot tools:
   + *Todo*
 
@@ -21,7 +21,8 @@ Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurub
 | USER            | --user *user*    | *required* | Username, can be a regular user, but moderator is recommended (as it required for some tasks)                                                                                                                                            |
 | TOKEN           | --token *token*  | *required* | Login Token for this user, no password authentication, easiest way is to generate one via the standard web interface                                                                                      |
 | MODE            | -b/-c/-a         | bot        | Mode, can be either bot for running in bot mode, command (c or com) to run a single command or api which allows you to run an api command                                                                      |
-| METHODE         |  --methode *met* | *optional* | Ignored in Bot mode, but is required for command and api mode. It is the [command](https://github.com/TheLichten/szurubooru-bot/blob/master/doc/Commands.md) for command mode and the api [url-ending](https://github.com/rr-/szurubooru/blob/master/doc/API.md) for api mode                                                                        |
+| METHODE         |  --methode *met* | *optional* | Ignored in Bot mode, but is required for command and api mode. It is the [command](https://github.com/TheLichten/szurubooru-bot/blob/master/doc/Commands.md) for command mode and the api [url-ending](doc/API.md) for api mode                                                                        |
+| ARG_*KEY*         |  -arg *Key*=*Value* | *optional* | Additional arguments needed for certain commands in Command Mode, see [here](doc/API.md) for a list.                                                                        |
 
 
 Running the programm in Bot Mode will lead to the automatic creation of a config.json (a dicitonary using the Docker names as keys).  
@@ -30,6 +31,6 @@ If the config.json exists it won't be overwritten.
 You can create/edit a config.json to set defaults, including setting the MODE to something other then bot.  
 
 ## Plans
-+ Mass Tagging (and other mass editing)
++ Other mass editing
 + Gathering Text from Images
 + Auto Tagging
