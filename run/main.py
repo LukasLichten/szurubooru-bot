@@ -2,21 +2,23 @@ import json;
 import base64;
 import time;
 
-import api_handler;
+from . import api_handler;
+from . import command;
 
 # called by docker_entry or cli after gathering their enviroment variables
 def init(settings):
     # basic clean up:
     for key, value in settings.copy().items():
-        if value == '':
+        if value == '' or (len(value) == 0 and value[0] == ''):
            del settings[key]; 
 
     file_settings = read_conf();
-    
+
     # there is a config file, enviroment variables have priority
     if len(file_settings) > 0:
         print('Setting File found, adding values, enviroment variables keep priority');
         for key, value in file_settings.copy().items():
+
             if key == 'SERVER_ADDRESSE' and key in settings and settings[key] == 'server':
                 # the addresse in env is the default, we will use the one from the file
                 settings[key] = file_settings[key];
@@ -26,7 +28,7 @@ def init(settings):
             elif key not in settings:
                 settings[key] = file_settings[key];
     
-    else:
+    elif 'MODE' not in settings or settings['MODE'].lower() == 'bot':
         # we only write the config if it does not exist already
         print('Writing Setting File');
         write_conf(settings);
@@ -39,20 +41,34 @@ def init(settings):
         lacking_key_error_thrower('SERVER_ADDRESSE');
 
     api_url = settings['SERVER_ADDRESSE'];
-    if api_url.find('http') == -1:
-        api_url = 'http://' + api_url;
-    
-    if api_url.endswith('/'):
-        # so we can add the port we remove the last slash
-        api_url = api_url[:(len(api_url)-1)];
-    
-    # TODO: Check for existing port in the url
 
+    has_http = api_url.find('http') != -1;
     if 'SERVER_PORT' not in settings:
-        lacking_key_error_thrower('SERVER_PORT');
+        settings['SERVER_PORT'] = '-1'
 
-    api_url = api_url + ':' + settings['SERVER_PORT'] + '/';
+    if not has_http or (has_http and settings['SERVER_PORT'] not in ['-1', '80', '443', '6666']):
+        if not has_http:
+            api_url = 'http://' + api_url;
+    
+        if api_url.endswith('/'):
+            # so we can add the port we remove the last slash
+            api_url = api_url[:(len(api_url)-1)];
+    
+        # TODO: Check for existing port in the url
+
+        if settings['SERVER_PORT'] == '-1':
+            lacking_key_error_thrower('SERVER_PORT');
+
+        api_url = api_url + ':' + settings['SERVER_PORT'] + '/';
+    else: #external mode, insuring http
+        if not api_url.endswith('/api/'):
+            if api_url.endswith('/'):
+                # uniform adding of the api
+                api_url = api_url[:(len(api_url)-1)];
+            api_url = api_url + '/api/';
+    
     settings['API_URL'] = api_url;
+    
     print('Server: {0}'.format(api_url))
 
     # formating header
@@ -70,16 +86,34 @@ def init(settings):
     print('User: {0}'.format(settings['USER']));
 
     # Branching between single run and continues execution
-    if 'METHODE' not in settings:
-        print('Entering continues execution');
+    if 'MODE' not in settings or settings['MODE'].lower() == 'bot':
         run(settings);
     else:
+        if 'METHODE' not in settings:
+            lacking_key_error_thrower('METHODE');
+        
+        mode = settings['MODE'].lower();
         method = settings['METHODE'];
-        print('Executing {0}'.format(method));
-        api_handler.get_and_out(settings, method);
-        print('Finished execution');
+
+        if mode == 'command' or mode == 'c' or mode == 'com':
+            print('Entering Command Mode...');
+            method = method.lower();
+
+            if method == 'mass_tag':
+                command.mass_tag(settings);
+            else:
+                command.stop_early('Methode {0} unknown, make sure you spelled it correctly'.format(method))
+
+        elif mode == 'api':
+            print('Entering API Mode...');
+            print('Executing {0}'.format(method));
+            api_handler.get_and_out(settings, method);
+    
+    print('Finished execution');
 
 def run(settings):
+    print('Entering Bot Mode...');
+
     # TODO: proper programm
     while True:
         time.sleep(10);
@@ -98,4 +132,5 @@ def write_conf(settings):
 
 def lacking_key_error_thrower(key):
     print('Missing {0}, which is required to be passed in'.format(key));
-    raise NameError('{0} was not passed in, and is missing'.format(key));
+    exit();
+    #raise NameError('{0} was not passed in, and is missing'.format(key));

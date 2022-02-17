@@ -1,3 +1,7 @@
 /.git/
+__pycache__/
 .gitignore
+config.json
+
 test.sh
+test-cli.sh
