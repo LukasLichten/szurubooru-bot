@@ -1,10 +1,10 @@
 # szurubooru-bot
-Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurubooru), able to be used containerized or cli (or cli in container)  
+Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurubooru), able to be used [containerized](https://hub.docker.com/r/generalfluff/szurubooru-bot) or cli (or cli in container)  
 
 ## Features
 + Deploy as you need:
-  + Docker in Bot mode, doing bot tasks but also allowing to exec into and run commands via cli using the container config
-  + Docker in Single command, runs the command and closes
+  + [Docker](https://hub.docker.com/r/generalfluff/szurubooru-bot) in Bot mode, doing bot tasks but also allowing to exec into and run commands via cli using the container config
+  + [Docker](https://hub.docker.com/r/generalfluff/szurubooru-bot) in Single command, runs the command and closes
   + Cli can do both as well
 + Admin tools:
   + Mass Tagging
