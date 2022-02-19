@@ -9,7 +9,7 @@ from . import command;
 def init(settings):
     # basic clean up:
     for key, value in settings.copy().items():
-        if value == '' or (len(value) == 0 and value[0] == ''):
+        if value == '' or value != None and (len(value) == 0 or (len(value) == 1 and value[0] == '')):
            del settings[key]; 
 
     file_settings = read_conf();
@@ -60,12 +60,24 @@ def init(settings):
             lacking_key_error_thrower('SERVER_PORT');
 
         api_url = api_url + ':' + settings['SERVER_PORT'] + '/';
-    else: #external mode, insuring http
+
+        if 'DATA_PATH' not in settings: # automatic default for "internal" server is to retrieve data from a mounted directory (/data folder)
+            data_path = '/'; # this is just / as the data directory gets added with requests
+            settings['DATA_PATH'] = data_path;
+
+    else: # external mode, insuring http
         if not api_url.endswith('/api/'):
             if api_url.endswith('/'):
                 # uniform adding of the api
                 api_url = api_url[:(len(api_url)-1)];
             api_url = api_url + '/api/';
+        
+        if 'DATA_PATH' not in settings: # automatic default for an external server is to retrieve the data from the server
+            data_url = api_url[:len(api_url)-len('api/')];
+            settings['DATA_PATH'] = data_url;
+
+    if 'DATA_PATH' in settings and not settings['DATA_PATH'].endswith('/'):
+        settings['DATA_PATH'] = settings['DATA_PATH'] + '/';
     
     settings['API_URL'] = api_url;
     
@@ -101,6 +113,8 @@ def init(settings):
 
             if method == 'mass_tag':
                 command.mass_tag(settings);
+            elif method == 'image2note' or method == 'image2notes':
+                command.image2notes(settings);
             else:
                 command.stop_early('Methode {0} unknown, make sure you spelled it correctly'.format(method))
 
@@ -133,4 +147,3 @@ def write_conf(settings):
 def lacking_key_error_thrower(key):
     print('Missing {0}, which is required to be passed in'.format(key));
     exit();
-    #raise NameError('{0} was not passed in, and is missing'.format(key));

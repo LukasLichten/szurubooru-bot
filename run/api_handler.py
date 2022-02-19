@@ -8,6 +8,22 @@ def get_and_out(settings,method):
     #json_response = response.json();
     print(j);
 
+def get_code(url):
+    response = requests.get(
+        url
+    );
+    
+    return response.status_code;
+    
+def download_file(url, file):
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk);
+    
+    return file;
+
 def get(url, header):
     response = requests.get(
         url,
