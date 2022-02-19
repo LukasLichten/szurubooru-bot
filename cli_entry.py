@@ -38,6 +38,7 @@ parser = argparse.ArgumentParser(prog='szuru',description='CLI for the Szuruboor
 connectGroup = parser.add_argument_group('Connection')
 connectGroup.add_argument('-s','-S','--server',help='The Server Addresse. If the addresse includes http/s (and port is default or 80/443) it is assumed you are external, meaning it will add /api/ (if not present). Else it assumes to be talking directly to the backend server (default=server)');
 connectGroup.add_argument('-p','-P','--port',help='The Server Port. (default=6666)',type=int);
+connectGroup.add_argument('-d','-D','--data','--data-path',help='Path to the Data, required only for certain functions (like image2notes). The Default is that when the server is external it will fetch from there, if internal it assumes it got /data mount same as the server or client, but this will override this (read only is suffient). Also the data part is omitted, as each element path includes it');
 
 connectGroup.add_argument('-u','-U','--user',help='Username, can be a regular user, but moderator is recommended (as it required for some tasks)');
 connectGroup.add_argument('-t','-T','--token',help='Login Token for this user, no password authentication, easiest way is to generate one via the standard web interface');
@@ -79,8 +80,11 @@ else:
 
 if pre_settings['user'] != None:
     settings['USER'] = pre_settings['user'];
-if 'token' in pre_settings:
+if pre_settings['token'] != None:
     settings['TOKEN'] = pre_settings['token'];
+
+if pre_settings['data'] != None:
+    settings['DATA_PATH'] = pre_settings['data'];
 
 if pre_settings['bot'] == True:
     settings['MODE'] = 'bot';
