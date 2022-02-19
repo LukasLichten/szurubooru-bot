@@ -8,6 +8,7 @@ Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurub
   + Cli can do both as well
 + Admin tools:
   + Mass Tagging
+  + Image2Notes, gathers text from images and adds it to the notes to allow searching (great with memes)
   + Run commands on the api
 + Bot tools:
   + *Todo*
@@ -18,6 +19,7 @@ Some python to perform admin tasks in [szurubooru](https://github.com/rr-/szurub
 | ----------------|-------------|----------| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | SERVER_ADDRESSE | --server *add*   | server     | The Server Addresse. If the addresse includes http/s (and port is default or 80/443) it is assumed you are external, meaning it will add /api/ (if not present). Else it assumes to be talking directly to the backend server. |
 | SERVER_PORT     | --port *port*    | 6666       | The Port to access the server with, the default port of 6666 is the default port of the backend server of szurubooru                                                                                                                                                          |
+| DATA_PATH     | --data-path *path*    | *auto*     | Path to the Data, required only for certain functions (like image2notes). The Default is that when the server is external it will fetch from there, if internal it assumes it got /data mount same as the server or client, but this will override this (read only is suffient). Also the data part is omitted, as each element path includes it |
 | USER            | --user *user*    | *required* | Username, can be a regular user, but moderator is recommended (as it required for some tasks)                                                                                                                                            |
 | TOKEN           | --token *token*  | *required* | Login Token for this user, no password authentication, easiest way is to generate one via the standard web interface                                                                                      |
 | MODE            | -b/-c/-a         | bot        | Mode, can be either bot for running in bot mode, command (c or com) to run a single command or api which allows you to run an api command                                                                      |
@@ -32,5 +34,6 @@ You can create/edit a config.json to set defaults, including setting the MODE to
 
 ## Plans
 + Other mass editing
-+ Gathering Text from Images
++ Webhook for bot to get new posts
++ Improved text gathering
 + Auto Tagging

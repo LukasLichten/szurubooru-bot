@@ -82,7 +82,7 @@ def mass_tag(settings):
         if code != 200:
             stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
         
-        print('Done Post {0} ({0}/{1})'.format(post_id,x,len(ids)));
+        print('Done Post {0} ({1}/{2})'.format(post_id,x,len(ids)));
         x = x + 1;
             
     
@@ -90,6 +90,10 @@ def mass_tag(settings):
 
 def image2notes(settings):
     print('Running Image2Notes...');
+
+    if 'ARG_LANG' not in settings:
+        settings['ARG_LANG'] = 'eng';
+
     try:
         from . import image_processing;
 
@@ -119,16 +123,18 @@ def image2notes(settings):
                 if path.exists(file_path):
                     stop_early('File does not exist, make sure the data path is correct: {0}'.format(settings['DATA_PATH']));
 
-            text = image_processing.image_2_text(file_path);
+            text = image_processing.image_2_text(file_path, settings['ARG_LANG']);
             
-            print(text);
-            post_update = {'version': old_post['version'], 'notes': [{'polygon': [[0,0],[0,0],[0,0],[0,0]],'text': text}]};
+            if text != '':
+                post_update = {'version': old_post['version'], 'notes': [{'polygon': [[0,0],[0,0],[0,0],[0,0]],'text': text}]};
 
-            (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(post_update));
-            if code != 200:
-                stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
+                (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(post_update));
+                if code != 200:
+                    stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
             
-            print('Done Post {0} ({0}/{1})'.format(post_id,x,len(ids)));
+                print('Done Post {0} ({1}/{2}): {3}'.format(post_id,x,len(ids),text));
+            else:
+                print('No Text, skipping post {0} ({1}/{2})'.format(post_id,x,len(ids)));
             x = x + 1;
 
             # Delete Temporary file

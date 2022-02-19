@@ -12,6 +12,7 @@ def get_additional_arguments(pre_settings, settings):
         'tag_category': ('ARG_TAG_CATEGORY',False),
         'posts':('ARG_POSTS',True),
         'post':('ARG_POSTS',True),
+        'lang':('ARG_LANG',False)
     }
 
     for a in args:

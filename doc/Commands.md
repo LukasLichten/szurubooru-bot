@@ -22,3 +22,18 @@ Serves to tag multiple posts with one or many tags in one go. It can create tags
 | POSTS        | The Post IDs, defined as a range, *example: 1,3-5 is equivalent to 1,3,4,5*  |
 | CREATE_TAG   | True or False to creating tags that don't exist yet, *default: True*         |
 | TAG_CATEGORY | Only applies to newly created tags, *default: default category*              |
+  
+### Image2Notes
+  
+`image2note`  
+  
+Tries to read the text from an image and adds it to the notes, allowing search querries to search. Great for memes.  
+  
+| Argument key | Description                                                                  |
+| -------------|:----------------------------------------------------------------------------:|
+| POSTS        | The Post IDs, defined as a range, *example: 1,3-5 is equivalent to 1,3,4,5*  |
+| LANG         | Language string, compine multiple lanugaes with a plus, *default: eng*       |
+  
+The Language string is supplied directly to the ocr, for further info [here](https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html).  
+But the basics is that you can combine multiple languages via +, *example: eng+jpn*, the order does matter.  
+If you are using the docker image then these languages are available: eng, deu, jpn, chi_sim  
