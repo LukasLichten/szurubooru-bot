@@ -61,28 +61,28 @@ def mass_tag(settings):
     x = 1;
     for post_id in ids:
         (code,old_post) = api_handler.get(settings['API_URL']+'post/'+str(post_id), settings['HEADER']);
-        if code != 200:
-            stop_early('Post {0} does not exist'.format(post_id))
-
-        edit_tag_list = [];
-        if 'tags' in old_post:
-            for t_entry in old_post["tags"]:
-                edit_tag_list.append(t_entry['names'][0]);
+        if code == 200:
+            edit_tag_list = [];
+            if 'tags' in old_post:
+                for t_entry in old_post["tags"]:
+                    edit_tag_list.append(t_entry['names'][0]);
         
-        # Iterating over the tags to add
-        for t in tags:
+            # Iterating over the tags to add
+            for t in tags:
 
-            # Adding tag
-            if t not in edit_tag_list:
-                edit_tag_list.append(t);
+                # Adding tag
+                if t not in edit_tag_list:
+                    edit_tag_list.append(t);
         
-        new_post = {'version': old_post['version'], 'tags':edit_tag_list};
+            new_post = {'version': old_post['version'], 'tags':edit_tag_list};
 
-        (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(new_post));
-        if code != 200:
-            stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
+            (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(new_post));
+            if code != 200:
+                stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
         
-        print('Done Post {0} ({1}/{2})'.format(post_id,x,len(ids)));
+            print('Done Post {0} ({1}/{2})'.format(post_id,x,len(ids)));
+        else:
+            print('Post not found, skipping post {0} ({1}/{2})'.format(post_id,x,len(ids)));
         x = x + 1;
             
     
@@ -106,40 +106,42 @@ def image2notes(settings):
         x = 1;
         for post_id in ids:
             (code,old_post) = api_handler.get(settings['API_URL']+'post/'+str(post_id), settings['HEADER']);
-            if code != 200:
-                stop_early('Post {0} does not exist'.format(post_id));
             
-            file_path = settings['DATA_PATH'] + old_post['contentUrl'];
+            if code == 200:
+                file_path = settings['DATA_PATH'] + old_post['contentUrl'];
 
-            if file_path.find('http') != -1: # external data source
-                if api_handler.get_code(file_path) != 200:
-                    stop_early('File does not exist, make sure the data url is correct: {0}'.format(settings['DATA_PATH']));
+                if file_path.find('http') != -1: # external data source
+                    if api_handler.get_code(file_path) != 200:
+                        stop_early('File does not exist, make sure the data url is correct: {0}'.format(settings['DATA_PATH']));
                 
-                
-                file_path = api_handler.download_file(file_path, 'tmp/'+path.basename(file_path));
+                    file_path = api_handler.download_file(file_path, 'tmp/'+path.basename(file_path));
+                else:
+                    if path.exists(file_path):
+                        stop_early('File does not exist, make sure the data path is correct: {0}'.format(settings['DATA_PATH']));
+
+                # Gathering the text
+                text = image_processing.image_2_text(file_path, settings['ARG_LANG']);
+
+                # Updating notes if applies
+                if text != '':
+                    post_update = {'version': old_post['version'], 'notes': [{'polygon': [[0,0],[0,0],[0,0],[0,0]],'text': text}]};
+
+                    (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(post_update));
+                    if code != 200:
+                        stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
+            
+                    print('Done Post {0} ({1}/{2}): {3}'.format(post_id,x,len(ids),text));
+                else:
+                    print('No Text, skipping post {0} ({1}/{2})'.format(post_id,x,len(ids)));
                 
 
+                # Delete Temporary file
+                if file_path.startswith('tmp'):
+                    path.os.remove(file_path);
             else:
-                if path.exists(file_path):
-                    stop_early('File does not exist, make sure the data path is correct: {0}'.format(settings['DATA_PATH']));
-
-            text = image_processing.image_2_text(file_path, settings['ARG_LANG']);
-            
-            if text != '':
-                post_update = {'version': old_post['version'], 'notes': [{'polygon': [[0,0],[0,0],[0,0],[0,0]],'text': text}]};
-
-                (code,j) = api_handler.put(settings['API_URL']+'post/'+str(post_id), settings['HEADER'], json.dumps(post_update));
-                if code != 200:
-                    stop_early('Failed to update post {0} ({1}/{2}), reason: {3}'.format(post_id, x, len(ids), j['description']));
-            
-                print('Done Post {0} ({1}/{2}): {3}'.format(post_id,x,len(ids),text));
-            else:
-                print('No Text, skipping post {0} ({1}/{2})'.format(post_id,x,len(ids)));
+                print('Post not found, skipping post {0} ({1}/{2})'.format(post_id,x,len(ids)));
             x = x + 1;
 
-            # Delete Temporary file
-            if file_path.startswith('tmp'):
-                path.os.remove(file_path);
 
 
     except ModuleNotFoundError:
