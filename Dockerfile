@@ -13,8 +13,15 @@ RUN rm requirements.txt
 
 # Set up Tesseract-OCR
 RUN apk add --no-cache tesseract-ocr
-RUN apk add --no-cache tesseract-ocr-data-deu tesseract-ocr-data-chi_sim tesseract-ocr-data-jpn
+# RUN apk add --no-cache tesseract-ocr-data-deu tesseract-ocr-data-chi_sim tesseract-ocr-data-jpn
 
+# Adding best trained files
+RUN apk add --no-cache wget
+RUN wget -q https://github.com/tesseract-ocr/tessdata_best/raw/main/eng.traineddata
+RUN mkdir -p /usr/share/tessdata
+RUN mv eng.traineddata /usr/share/tessdata/eng_best.traineddata
+
+# Adding a tmp folder for image processing
 RUN mkdir tmp/
 
 ENTRYPOINT [ "python3", "-m", "docker_entry" ]

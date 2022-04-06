@@ -120,7 +120,7 @@ def image2notes(settings):
                         stop_early('File does not exist, make sure the data path is correct: {0}'.format(settings['DATA_PATH']));
 
                 # Gathering the text
-                text = image_processing.image_2_text(file_path, settings['ARG_LANG']);
+                text = image_processing.image_2_words(file_path, settings['ARG_LANG']);
 
                 # Updating notes if applies
                 if text != '':
